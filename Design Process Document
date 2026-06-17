@@ -1,0 +1,37 @@
+# Design Process Document: CLI Alarm Clock Engine
+
+This document outlines the systematic engineering design process followed to translate an open-ended, database-free CLI alarm clock specification into a robust, multi-threaded, and thread-safe production-ready utility.
+
+---
+
+## 1. Requirements Analysis & Scope Control
+
+Given a wide-open specification ("decide what to build with the time you have"), the primary design constraint was prioritizing **architectural depth and system stability** over an exhaustive list of brittle features. 
+
+### Core MVP Scope
+* **Concurrency:** Support for multiple, independently managed alarms.
+* **Pure CLI Interface:** A resilient, interactive menu-driven command prompt with robust input sanitization.
+* **Defensive Date Rollover:** Mathematical handling of past-timestamp inputs, automatically scheduling them for the next calendar day.
+* **Hardware Alerting:** Zero-dependency, cross-platform audio and visual loops.
+
+### Explicit Constraints
+* No database (State must be managed natively and safely in memory).
+* No web/React UI (Pure terminal execution framework).
+* Zero third-party dependencies (Built entirely using the Python Standard Library).
+
+---
+
+## 2. Architectural Evolution & Iterations
+
+The architecture evolved through three distinct phases to address problems related to thread blocking, race conditions, and separation of concerns.
+
+### Iteration 1: Single-Threaded Monolith (Rejected)
+* **Design:** A simple execution script that captured a single time string and entered a `while True` loop comparing `datetime.now()` to the target time.
+* **Flaw:** The main execution thread completely freezes during the countdown. It is impossible to add multiple alarms, view list states, or cancel the program cleanly without forcing a hard crash.
+
+### Iteration 2: Multi-Threaded Target Ticker (Intermediate)
+* **Design:** Spawning a single background daemon thread targeted to watch one specific computed `datetime` object, freeing the main thread to handle basic inputs.
+* **Flaw:** This model scales poorly. Tracking multiple alarms would require spawning a unique background thread for *every single alarm* created, resulting in massive, inefficient resource overhead.
+
+### Iteration 3: Centrally Managed Ticker Engine (Selected)
+* **Design:** Encapsulating state operations into a single shared `AlarmManager` class. The interface loop runs on the primary thread, while a single background engine thread handles time validation loops.
