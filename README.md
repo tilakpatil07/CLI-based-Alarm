@@ -14,7 +14,7 @@ To deliver a high-quality CLI application without relying on a database or web s
 * **Transient Alert Threading:** When an alarm matches, the engine spawns an isolated, transient thread to execute the visual-audio alert loop. This ensures that the primary background ticker loop is never blocked, allowing multiple alarms scheduled for the exact same second to fire simultaneously without lagging.
 * **Resource Cleanup:** The background components run as `daemon` threads, ensuring that when the user exits the main thread interface, all background workers terminate instantly without leaving orphaned processes.
 
-* 🚀 Key Features
+## 🚀 Key Features
 Interactive Control Panel: A persistent terminal menu allowing users to view current alarms, add new entries, toggle active/inactive states, or delete alarms cleanly.
 
 Intelligent Date Roll-Over: Schedules times that have already passed for tomorrow automatically (e.g., setting a 10:00 alarm at 14:00 will dynamically schedule it for 10:00 AM the following calendar day).
@@ -23,7 +23,7 @@ State Toggling: Temporarily pause/unpause individual alarms by their unique ID w
 
 Visual Polish: Uses terminal carriage returns (\r) to display visual flashing alerts right in place without printing endless rows of spam down the terminal screen history.
 
-* 🚀 Usage Guide
+## 🚀 Usage Guide
 Upon launching, interact with the application using numeric menu entries:
 
 Press 1 to view all configured alarms along with their status (ON/OFF) and exact calculated next ring timestamps. While in this menu, you can input an Alarm ID to toggle it.
